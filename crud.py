@@ -1,23 +1,11 @@
-from fastapi import HTTPException, status, Depends
-from database import SessionLocal
-from contextlib import contextmanager
-from fastapi.security import OAuth2PasswordBearer
-from typing import Annotated
+from fastapi import HTTPException
 from passlib.context import CryptContext
-import jwt
-from jwt.exceptions import InvalidTokenError
-from datetime import datetime, timedelta, timezone
+from contextlib import contextmanager
+from database import SessionLocal
+from models import User
 import schemas
-from models import *
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 @contextmanager
@@ -34,71 +22,40 @@ def session_scope():
 
 
 def get_hash_password(password: str):
+    """Hash a password."""
     return pwd_context.hash(password)
 
 
-def verify_hash_password(plain_password: str, hash_password: str):
-    return pwd_context.verify(plain_password, hash_password)
+def verify_hash_password(plain_password: str, hashed_password: str):
+    """Verify a password against a hashed password."""
+    return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_user_by_email(email: str):
+    """Get a user by email."""
     with session_scope() as db:
         return db.query(User).filter(User.email == email).first()
 
 
 def get_user_by_username(username: str):
+    """Get a user by username."""
     with session_scope() as db:
         return db.query(User).filter(User.username == username).first()
 
 
-def authenticate_user(username: str, password: str):
-    db_user = get_user_by_username(username)
-    if not db_user or not verify_hash_password(password, db_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+def authenticate_user(user: schemas.UserLogin):
+    """Authenticate a user by email and password."""
+    db_user = get_user_by_email(user.email)
+    if not db_user or not verify_hash_password(user.password, db_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     return db_user
 
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    access_token_expires = datetime.now(timezone.utc) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    to_encode.update({"exp": access_token_expires})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=username)
-    except InvalidTokenError:
-        raise credentials_exception
-    user_db = get_user_by_username(token_data.username)
-    if user_db is None:
-        raise credentials_exception
-    return user_db
-
-
-def user_signup(user: schemas.UserCreate):
-    if get_user_by_email(email=user.email) or get_user_by_username(
-        username=user.username
-    ):
-        raise HTTPException(
-            status_code=400, detail="Email or username already registered"
-        )
-    hashed_password = get_hash_password(password=user.password)
+def create_user(user: schemas.UserCreate):
+    """Create a new user."""
+    if get_user_by_email(user.email):
+        raise HTTPException(status_code=400, detail="Email already registered")
+    hashed_password = get_hash_password(user.password)
     new_user = User(
         username=user.username, email=user.email, hashed_password=hashed_password
     )
@@ -107,14 +64,3 @@ def user_signup(user: schemas.UserCreate):
         db.commit()
         db.refresh(new_user)
         return new_user
-
-
-def user_login(user: schemas.UserLogin):
-    login_user = authenticate_user(username=user.username, password=user.password)
-    if login_user:
-        new_access_token = create_access_token(
-            data={
-                "sub": login_user.username,
-            }
-        )
-        return {"access_token": new_access_token, "token_type": "bearer"}
