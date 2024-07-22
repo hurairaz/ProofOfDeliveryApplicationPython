@@ -1,0 +1,5 @@
+sqlalchemy~=2.0.31
+pydantic~=2.8.2
+fastapi~=0.111.1
+passlib~=1.7.4
+PyJWT~=2.8.0
