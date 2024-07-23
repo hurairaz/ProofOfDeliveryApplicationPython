@@ -5,7 +5,7 @@ import schemas
 import crud
 import auth_handler
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(prefix="/auth", tags=["Authentication Endpoints"])
 
 
 @router.post("/signup", response_model=schemas.Token)
@@ -28,4 +28,3 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 @router.get("/details")
 def get_details(email: str = Depends(auth_handler.JWTBearer())):
     return {"email": email}
-

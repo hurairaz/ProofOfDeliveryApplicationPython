@@ -1,4 +1,54 @@
 from pydantic import BaseModel
+from datetime import datetime
+import enum
+from typing import Optional
+
+
+class DispatchStatus(str, enum.Enum):
+    pending = "pending"
+    accepted = "accepted"
+    started = "started"
+    completed = "completed"
+
+
+class DispatchBase(BaseModel):
+    area: str
+
+
+class DispatchCreate(DispatchBase):
+    pass
+
+
+class Dispatch(DispatchBase):
+    id: int
+    notes: Optional[str] = None
+    status: DispatchStatus
+    create_time: datetime
+    start_time: Optional[datetime] = None
+    complete_time: Optional[datetime] = None
+    pod_image: Optional[str] = None
+    recipient_name: Optional[str] = None
+    delivery_person_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+class DispatchUpdate(BaseModel):
+    status: Optional[DispatchStatus] = None
+    start_time: Optional[datetime] = None
+    complete_time: Optional[datetime] = None
+    recipient_name: Optional[str] = None
+    pod_image: Optional[str] = None
+    notes: Optional[str] = None
+    delivery_person_id: Optional[int] = None
+
+
+class DispatchResponse(BaseModel):
+    id: int
+    area: str
+    status: DispatchStatus
+    create_time: datetime
 
 
 class UserBase(BaseModel):
@@ -13,6 +63,7 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
     is_active: bool
+    dispatches: list[Dispatch] = []
 
     class Config:
         orm_mode = True
@@ -25,9 +76,3 @@ class UserLogin(BaseModel):
 
 class Token(BaseModel):
     jwt_token: str
-
-
-# class TokenData(BaseModel):
-#     username: str | None = None
-
-
