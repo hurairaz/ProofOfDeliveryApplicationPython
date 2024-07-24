@@ -1,7 +1,3 @@
-Here's an updated version of the README file with more detailed descriptions for each file and directory:
-
----
-
 # Proof Of Delivery Application
 
 This project is a web application for managing dispatches, built using FastAPI, PostgreSQL, and Alembic. It includes features for user authentication and dispatch management.
@@ -67,15 +63,3 @@ ProofOfDeliveryApplication/
 
 - **Authentication**: Use the `/auth` endpoints to register and log in users.
 - **Dispatch Management**: Use the `/dispatches` endpoints to create and manage dispatches.
-
-## Contributing
-
-Feel free to submit issues and pull requests. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-This version provides a detailed breakdown of each file and its purpose within the project, including explanations on their roles and functionality.
