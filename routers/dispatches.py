@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from typing import Optional
-from datetime import datetime
 import schemas
 import crud
 import auth_handler
@@ -21,7 +20,7 @@ def filter_dispatches(
     area: Optional[str] = None,
     status: Optional[schemas.DispatchStatus] = None,
     delivery_person_id: Optional[int] = None,
-    date: Optional[datetime] = None,
+    date: Optional[str] = None,
     dependency: str = Depends(auth_handler.JWTBearer()),
 ):
     return crud.filter_dispatches(
@@ -34,21 +33,28 @@ def get_dispatch(dispatch_id: int, dependency: str = Depends(auth_handler.JWTBea
     return crud.filter_dispatches(dispatch_id=dispatch_id)
 
 
-@router.post("/{dispatch_id}/accept", response_model=schemas.Dispatch)
-def accept_dispatch(dispatch_id: int, email: str = Depends(auth_handler.JWTBearer())):
-    return crud.accept_dispatch(dispatch_id=dispatch_id, user_email=email)
-
-
 @router.post("/{dispatch_id}/start", response_model=schemas.Dispatch)
 def start_dispatch(dispatch_id: int, email: str = Depends(auth_handler.JWTBearer())):
     return crud.start_dispatch(dispatch_id=dispatch_id, user_email=email)
 
 
+@router.post("/{dispatch_id}/complete", response_model=schemas.Dispatch)
+def complete_dispatch(
+    dispatch_id: int,
+    recipient_name: str,
+    pod_image: Optional[str] = None,
+    notes: Optional[str] = None,
+    user_email: str = Depends(auth_handler.JWTBearer()),
+):
+    return crud.complete_dispatch(
+        user_email, dispatch_id, recipient_name, pod_image, notes
+    )
 
 
-@router.get("/accepted", response_model=list[schemas.Dispatch])
-def get_user_dispatches(email: str = Depends(auth_handler.JWTBearer())):
-    return crud.get_user_dispatches(user_email=email)
+@router.post("/{dispatch_id}/accept", response_model=schemas.Dispatch)
+def accept_dispatch(dispatch_id: int, email: str = Depends(auth_handler.JWTBearer())):
+    return crud.accept_dispatch(dispatch_id=dispatch_id, user_email=email)
+
 
 @router.post("/create", response_model=schemas.Dispatch)
 def create_dispatch(
@@ -56,3 +62,8 @@ def create_dispatch(
     dependency: str = Depends(auth_handler.JWTBearer()),
 ):
     return crud.create_dispatch(dispatch=dispatch)
+
+
+@router.get("/{dispatch_id}/delivery_person")
+def get_delivery_person(dispatch_id: int):
+    return crud.get_delivery_person(dispatch_id)

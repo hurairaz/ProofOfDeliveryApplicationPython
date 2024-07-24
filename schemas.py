@@ -34,16 +34,6 @@ class Dispatch(DispatchBase):
         orm_mode = True
 
 
-class DispatchUpdate(BaseModel):
-    status: Optional[DispatchStatus] = None
-    start_time: Optional[datetime] = None
-    complete_time: Optional[datetime] = None
-    recipient_name: Optional[str] = None
-    pod_image: Optional[str] = None
-    notes: Optional[str] = None
-    delivery_person_id: Optional[int] = None
-
-
 class DispatchResponse(BaseModel):
     id: int
     area: str
