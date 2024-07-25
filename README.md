@@ -1,6 +1,6 @@
 # Proof Of Delivery Application Python
 
-The Proof Of Delivery Application is designed to manage dispatches using FastAPI, SQLAlchemy, PostgreSQL, and Alembic. The application includes features for user authentication and efficient dispatch management.
+The Proof Of Delivery Application is designed to manage dispatches using FastAPI, SQLAlchemy, PostgreSQL, and Alembic. It includes features for user authentication and efficient dispatch management.
 
 ## Project Structure
 
@@ -29,7 +29,6 @@ ProofOfDeliveryApplicationPython/
     ├── auth.py
     └── dispatches.py
 ```
-**Note:** For detailed instructions on integrating FastAPI with PostgreSQL and initializing Alembic, please refer to my repository [Integrating-FastAPI-with-SQLAlchemy-PostgreSQL-and-Alembic](https://github.com/hurairaz/Integrating-FastAPI-with-SQLAlchemy-PostgreSQL-and-Alembic).
 
 ### Features
 
@@ -46,7 +45,7 @@ The application offers several key features:
 
 To set up and run the application, follow these steps:
 
- **Clone the Repository**
+1. **Clone the Repository**
 
    Clone the repository to your local machine:
 
@@ -55,7 +54,7 @@ To set up and run the application, follow these steps:
    cd ProofOfDeliveryApplicationPython
    ```
 
- **Create and Activate a Virtual Environment**
+2. **Create and Activate a Virtual Environment**
 
    Create a virtual environment and activate it:
 
@@ -64,7 +63,7 @@ To set up and run the application, follow these steps:
    source .venv/bin/activate
    ```
 
- **Install Required Dependencies**
+3. **Install Required Dependencies**
 
    Install the necessary Python packages:
 
@@ -72,15 +71,28 @@ To set up and run the application, follow these steps:
    pip install -r requirements.txt
    ```
 
- **Configure the Database**
+4. **Configure the Database**
 
-   Update the database connection details in `database.py`. After configuring, apply the migrations with Alembic:
+   Before running application, you'll need to create a PostgreSQL database. Update the database connection details in `database.py` with the appropriate values for your PostgreSQL setup (e.g., database name, username, password, hostname).
+
+5. **Initialize and Apply Alembic Migrations**
+
+   Alembic manages database migrations. First, initialize Alembic in your project directory:
+
+   ```bash
+   alembic init alembic
+   ```
+
+   Ensure that the `alembic.ini` file and `env.py` within the `alembic/` directory are configured with your database URL and model metadata. Then, apply the migrations to your database:
 
    ```bash
    alembic upgrade head
    ```
+**Note:** For detailed instructions on integrating FastAPI with PostgreSQL and initializing Alembic, please refer to my repository [Integrating-FastAPI-with-SQLAlchemy-PostgreSQL-and-Alembic](https://github.com/hurairaz/Integrating-FastAPI-with-SQLAlchemy-PostgreSQL-and-Alembic).
 
- **Run the Application**
+
+
+6. **Run the Application**
 
    Start the FastAPI application:
 
@@ -89,6 +101,4 @@ To set up and run the application, follow these steps:
    ```
 
    The application will be available for interaction.
-
----
 
