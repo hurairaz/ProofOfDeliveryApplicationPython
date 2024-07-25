@@ -1,6 +1,6 @@
 # Proof Of Delivery Application Python
 
-The Proof Of Delivery Application Python is designed to manage dispatches using FastAPI, SQLAlchemy, PostgreSQL, and Alembic. It includes features for user authentication and efficient dispatch management.
+The "Proof Of Delivery Application" is built with FastAPI, PostgreSQL, and Alembic. It offers secure user authentication via JWT tokens and handles dispatch management, including creation, tracking, and filtering of dispatches. Alembic facilitates seamless database migrations to accommodate evolving data requirements.
 
 ## Project Structure
 
