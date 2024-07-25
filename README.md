@@ -34,7 +34,8 @@ ProofOfDeliveryApplicationPython/
 
 The application offers several key features:
 
-- **User Authentication**: Provides functionality for user sign-up and login using JWT token-based authentication. This ensures secure access to the application and its features.
+- **User Authentication**: Provides functionality for user sign-up and login using JWT token-based authentication. This ensures secure access to the application and its features. To understand JWT token-based authentication in FastAPI, refer to my repository [Securing-FastAPI-with-JWT-Token-based-Authentication](https://github.com/hurairaz/Securing-FastAPI-with-JWT-Token-based-Authentication).
+
   
 - **Dispatch Management**: Allows users to create, accept, start, and complete dispatches. This feature supports the full lifecycle management of dispatch records within the system.
 
